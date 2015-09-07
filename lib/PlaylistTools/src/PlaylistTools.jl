@@ -19,6 +19,41 @@ typealias FileList Vector{String}
 fileList() = String[]
 
 
+# Helper functions
+################################################################################
+
+#Generate output file name from source filename
+#(Strip out numbers, spaces, -, & _ from source basename)
+#-------------------------------------------------------------------------------
+function cleannamme(src::String)
+	const pat = r"^[0-9|\-|_| ]*(.*)$"
+
+	#Get simplified filename:
+	m = match(pat, src)
+	result = strip(m.captures[1])
+	if length(result) < 1
+		result = src #Don't simplify
+	end
+	return result
+end
+
+#Generate names for the output files (file system playlist)
+#-------------------------------------------------------------------------------
+function filesystemplaylist(srclist::FileList)
+	result = fileList()
+	i = 1
+	for src in srclist
+		push!(result,  @sprintf("%03d-%s", i, cleannamme(basename(src))))
+		i += 1
+	end
+	return result
+end
+
+#Test if given file is in playlist
+#-------------------------------------------------------------------------------
+elemof(list::FileList, filename::String) = (findfirst(list, filename) != 0)
+
+
 # Read/Write functions
 ################################################################################
 
@@ -42,25 +77,6 @@ function Base.read(::Type{M3UFile}, path::String)
 	return result
 end
 
-
-# Helper functions
-################################################################################
-
-#Generate names for the output files (file system playlist)
-#-------------------------------------------------------------------------------
-function filesystemplaylist(srclist::FileList)
-	result = fileList()
-	i = 1
-	for src in srclist
-		push!(result, @sprintf("_trk%03d_%s", i, basename(src)))
-		i += 1
-	end
-	return result
-end
-
-#Test if given file in the playlist?
-#-------------------------------------------------------------------------------
-elemof(list::FileList, filename::String) = (findfirst(list, filename) != 0)
 
 
 # Main algorithms
@@ -95,7 +111,7 @@ function synchronize(psrc::FileList, plpath::String)
 	mapping = zip(psrc, pdest)
 	n_sync = 0
 	for (src, dest) in mapping
-		info("Sync \"$(basename(src))\"...")
+		info("Sync \"$(basename(dest))\"...")
 		if fastsync_sourcefile(src, joinpath(plpath, dest))
 			n_sync += 1
 		end
