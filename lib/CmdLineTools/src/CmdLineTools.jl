@@ -22,14 +22,14 @@ end
 
 # Prompt user for a value
 #-------------------------------------------------------------------------------
-function input{T}(::Type{T}, prompt::String)
+function input{T}(::Type{T}, prompt::AbstractString)
 	print(prompt)
 	return parsestring(T, strip(readline(STDIN)))
 end
 
 # Prompt user for a value, using default
 #-------------------------------------------------------------------------------
-function input{T}(::Type{T}, prompt::String, default)
+function input{T}(::Type{T}, prompt::AbstractString, default)
 	println(prompt)
 	print("[$default]: ")
 	result = parsestring(T, strip(readline(STDIN)))
@@ -40,7 +40,7 @@ function input{T}(::Type{T}, prompt::String, default)
 end
 
 # Prompt user for string:
-input(prompt::String) = input(ASCIIString, prompt)
+input(prompt::AbstractString) = input(ASCIIString, prompt)
 
 pause() = input("Press enter to continue...")
 

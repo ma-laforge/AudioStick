@@ -15,8 +15,8 @@ using FileTools
 abstract PlaylistFile
 type M3UFile <: PlaylistFile; end
 
-typealias FileList Vector{String}
-fileList() = String[]
+typealias FileList Vector{AbstractString}
+fileList() = AbstractString[]
 
 
 # Helper functions
@@ -25,7 +25,7 @@ fileList() = String[]
 #Generate output file name from source filename
 #(Strip out numbers, spaces, -, & _ from source basename)
 #-------------------------------------------------------------------------------
-function cleannamme(src::String)
+function cleannamme(src::AbstractString)
 	const pat = r"^[0-9|\-|_| ]*(.*)$"
 
 	#Get simplified filename:
@@ -51,16 +51,16 @@ end
 
 #Test if given file is in playlist
 #-------------------------------------------------------------------------------
-elemof(list::FileList, filename::String) = (findfirst(list, filename) != 0)
+elemof(list::FileList, filename::AbstractString) = (findfirst(list, filename) != 0)
 
 
 # Read/Write functions
 ################################################################################
 
 #-------------------------------------------------------------------------------
-function Base.read(::Type{M3UFile}, path::String)
+function Base.read(::Type{M3UFile}, path::AbstractString)
 	result = fileList()
-	prefix = realpath(path::String)
+	prefix = realpath(path::AbstractString)
 	f = open(path, "r")
 
 	try
@@ -86,7 +86,7 @@ end
 #   psrc:   Source playlist
 #   plpath: Path of filesystem-based playlist
 #-------------------------------------------------------------------------------
-function synchronize(psrc::FileList, plpath::String)
+function synchronize(psrc::FileList, plpath::AbstractString)
 	println("Synchronizing playlist \"$plpath\"...")
 
 	try

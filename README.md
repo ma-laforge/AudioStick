@@ -69,10 +69,7 @@ local computer.
 ## Verified Systems
 AudioStick has been verified to work with the following software versions:
 
-- Julia
- - v0.3.10
-- Windows
- - Windows 7
+ - Windows 7 / Julia-0.4.0
 
 ## Known Limitations
 

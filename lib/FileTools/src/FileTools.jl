@@ -15,7 +15,7 @@ export fastsync_sourcefile
 
 # Fast file matching algorithm.  Only checks dates & sizes.
 #-------------------------------------------------------------------------------
-function filesmatch_fast(src::String, dest::String)
+function filesmatch_fast(src::AbstractString, dest::AbstractString)
 	const tstamp_tol = 10 #seconds
 	result = false
 
@@ -31,7 +31,7 @@ end
 #Fast sync: does not generate a full hash mapping (ex: SHA-1).
 #Returns true if a copy was needed to synchronize files.
 #-------------------------------------------------------------------------------
-function fastsync_sourcefile(src::String, dest::String)
+function fastsync_sourcefile(src::AbstractString, dest::AbstractString)
 	filesmatch = false
 
 	if (!isfile(src))

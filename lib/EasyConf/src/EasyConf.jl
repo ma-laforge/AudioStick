@@ -10,9 +10,9 @@ export getvalue
 ################################################################################
 
 type ConfigDict
-	d::Dict{String, Any}
+	d::Dict{AbstractString, Any}
 end
-ConfigDict() = ConfigDict(Dict{String, Any}())
+ConfigDict() = ConfigDict(Dict{AbstractString, Any}())
 
 type EasyConfFile
 	s::IOStream
@@ -23,7 +23,7 @@ end
 ################################################################################
 
 #-------------------------------------------------------------------------------
-function Base.open(::Type{EasyConfFile}, path::String, args...)
+function Base.open(::Type{EasyConfFile}, path::AbstractString, args...)
 	s = open(path, args...)
 	return EasyConfFile(s)
 end
@@ -54,7 +54,7 @@ function Base.write(f::EasyConfFile, cfg::ConfigDict)
 end
 
 #-------------------------------------------------------------------------------
-function Base.read(::Type{EasyConfFile}, path::String)
+function Base.read(::Type{EasyConfFile}, path::AbstractString)
 	local f, cfg
 	try
 		f = open(EasyConfFile, path, "r")
@@ -72,7 +72,7 @@ function Base.read(::Type{EasyConfFile}, path::String)
 end
 
 #-------------------------------------------------------------------------------
-function Base.write(::Type{EasyConfFile}, path::String, cfg::ConfigDict)
+function Base.write(::Type{EasyConfFile}, path::AbstractString, cfg::ConfigDict)
 	f = open(EasyConfFile, path, "w")
 	try
 		write(f, cfg)
@@ -85,12 +85,12 @@ end
 # Other tools
 ################################################################################
 
-setindex!(c::ConfigDict, v, k::String) = c.d[k] = v
-getindex(c::ConfigDict, k::String) = c.d[k]
+Base.setindex!(c::ConfigDict, v, k::AbstractString) = c.d[k] = v
+Base.getindex(c::ConfigDict, k::AbstractString) = c.d[k]
 
 # Safe means of reading from ConfigDict
 #-------------------------------------------------------------------------------
-function getvalue(c::ConfigDict, k::String, vdefault)
+function getvalue(c::ConfigDict, k::AbstractString, vdefault)
 	local result
 	try
 		result = c[k]

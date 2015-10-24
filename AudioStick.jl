@@ -37,9 +37,9 @@ end
 ################################################################################
 
 type ASOptions
-	srcpath::String      #Input playlist file
-	destrootpath::String #Root folder where filesystem-based playlists are stored
-	destpath::String     #Folder of filesystem-based playlist
+	srcpath::AbstractString      #Input playlist file
+	destrootpath::AbstractString #Root folder where filesystem-based playlists are stored
+	destpath::AbstractString     #Folder of filesystem-based playlist
 end
 ASOptions() = ASOptions("", "", "")
 
