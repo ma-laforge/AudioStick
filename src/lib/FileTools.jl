@@ -3,7 +3,9 @@
 
 module FileTools
 
-export fastsync_sourcefile
+export filesmatch
+
+using SHA
 
 
 # Types
@@ -13,9 +15,23 @@ export fastsync_sourcefile
 # Functions
 ################################################################################
 
-# Fast file matching algorithm.  Only checks dates & sizes.
+#Compute hash key from file contents to verify file equivalence.
 #-------------------------------------------------------------------------------
-function filesmatch_fast(src::AbstractString, dest::AbstractString)
+function hashcontents(filepath::String)
+	try
+		open(filepath) do f
+			return sha2_256(f)
+		end
+	catch
+		return sha2_256("")
+	end
+end
+
+#Fast file matching algorithm.  Only checks dates & sizes.
+#DEPRECATED
+#   Cannot get copy operation to preserve time stamps.
+#-------------------------------------------------------------------------------
+function filesmatch_fast(src::String, dest::String)
 	const tstamp_tol = 10 #seconds
 	result = false
 
@@ -27,29 +43,13 @@ function filesmatch_fast(src::AbstractString, dest::AbstractString)
 	end
 end
 
-#Synchronize a file with its source (not a 2-way sync.)
-#Fast sync: does not generate a full hash mapping (ex: SHA-1).
-#Returns true if a copy was needed to synchronize files.
-#-------------------------------------------------------------------------------
-function fastsync_sourcefile(src::AbstractString, dest::AbstractString)
-	filesmatch = false
-
-	if (!isfile(src))
-		warn("Missing file: $src")
-		return false
-	elseif filesmatch_fast(src, dest)
-		return true
-	end
-
-#	cp(src, dest) #Won't preserve modified timestamps.
-	run(`cp $src $dest -p`)
-
-	if !filesmatch_fast(src, dest)
-		warn("Synchronization failed: $src -> $dest.")
-		return false
-	end
-
-	return true
+#SHA-based file check:
+function filesmatch_SHA(src::String, dest::String)
+	return hashcontents(src) == hashcontents(dest)
 end
+
+#Select file matching algorithm:
+filesmatch = filesmatch_SHA
+#filesmatch = filesmatch_fast
 
 end #FileTools

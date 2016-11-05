@@ -8,7 +8,6 @@ export println_ul
 
 using StringTools
 
-
 # Main tools
 ################################################################################
 
@@ -22,14 +21,14 @@ end
 
 # Prompt user for a value
 #-------------------------------------------------------------------------------
-function input{T}(::Type{T}, prompt::AbstractString)
+function input{T}(::Type{T}, prompt::String)
 	print(prompt)
 	return parsestring(T, strip(readline(STDIN)))
 end
 
 # Prompt user for a value, using default
 #-------------------------------------------------------------------------------
-function input{T}(::Type{T}, prompt::AbstractString, default)
+function input{T}(::Type{T}, prompt::String, default)
 	println(prompt)
 	print("[$default]: ")
 	result = parsestring(T, strip(readline(STDIN)))
@@ -40,7 +39,7 @@ function input{T}(::Type{T}, prompt::AbstractString, default)
 end
 
 # Prompt user for string:
-input(prompt::AbstractString) = input(ASCIIString, prompt)
+input(prompt::String) = input(String, prompt)
 
 pause() = input("Press enter to continue...")
 

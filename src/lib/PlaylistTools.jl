@@ -1,10 +1,9 @@
 #PlaylistTools.jl
-#Manipulates media playlists (reads in .m3u files, synchronizes folders...)
+#Manipulates media playlists (reads in .m3u files...)
 
 module PlaylistTools
 
-export M3UFile
-export synchronize
+export M3UFile, FileList
 
 using FileTools
 
@@ -15,52 +14,16 @@ using FileTools
 abstract PlaylistFile
 type M3UFile <: PlaylistFile; end
 
-typealias FileList Vector{AbstractString}
-fileList() = AbstractString[]
-
-
-# Helper functions
-################################################################################
-
-#Generate output file name from source filename
-#(Strip out numbers, spaces, -, & _ from source basename)
-#-------------------------------------------------------------------------------
-function cleannamme(src::AbstractString)
-	const pat = r"^[0-9|\-|_| ]*(.*)$"
-
-	#Get simplified filename:
-	m = match(pat, src)
-	result = strip(m.captures[1])
-	if length(result) < 1
-		result = src #Don't simplify
-	end
-	return result
-end
-
-#Generate names for the output files (file system playlist)
-#-------------------------------------------------------------------------------
-function filesystemplaylist(srclist::FileList)
-	result = fileList()
-	i = 1
-	for src in srclist
-		push!(result,  @sprintf("%03d-%s", i, cleannamme(basename(src))))
-		i += 1
-	end
-	return result
-end
-
-#Test if given file is in playlist
-#-------------------------------------------------------------------------------
-elemof(list::FileList, filename::AbstractString) = (findfirst(list, filename) != 0)
+typealias FileList Vector{String}
 
 
 # Read/Write functions
 ################################################################################
 
 #-------------------------------------------------------------------------------
-function Base.read(::Type{M3UFile}, path::AbstractString)
-	result = fileList()
-	prefix = realpath(path::AbstractString)
+function Base.read(::Type{M3UFile}, path::String)
+	result = FileList()
+	prefix = realpath(path::String)
 	f = open(path, "r")
 
 	try
@@ -78,49 +41,8 @@ function Base.read(::Type{M3UFile}, path::AbstractString)
 end
 
 
-
 # Main algorithms
 ################################################################################
 
-#Synchronize all files in playlist to the destination directory.
-#   psrc:   Source playlist
-#   plpath: Path of filesystem-based playlist
-#-------------------------------------------------------------------------------
-function synchronize(psrc::FileList, plpath::AbstractString)
-	println("Synchronizing playlist \"$plpath\"...")
-
-	try
-		mkpath(plpath)
-	catch
-		error("Could not create destination folder: $plpath.")
-	end
-
-	#Desired output (filesystem-based) playlist:
-	pdest = filesystemplaylist(psrc)
-
-	n_delete = 0
-	filelist = readdir(plpath)
-	for filename in filelist
-		if !elemof(pdest, basename(filename))
-			info("Delete \"$filename\"...")
-			rm(joinpath(plpath, filename))
-			n_delete += 1
-		end
-	end
-
-	mapping = zip(psrc, pdest)
-	n_sync = 0
-	for (src, dest) in mapping
-		info("Sync \"$(basename(dest))\"...")
-		if fastsync_sourcefile(src, joinpath(plpath, dest))
-			n_sync += 1
-		end
-	end
-
-	missing = length(pdest) - n_sync
-	print("\nDone. ")
-	print("$n_sync files synchronized ($missing missing)")
-	print(", $n_delete files deleted.\n")
-end
 
 end #PlaylistTools

@@ -1,21 +1,22 @@
-#AudioStick.jl
-#
-#Copies/synchronizes a media playlist to an arbitrary folder/drive.
+#ASSync.jl
+#Simple command line interface for AudioStick package.
 
 const __APPPATH__ = dirname(realpath(@__FILE__))
-push!(LOAD_PATH, joinpath(__APPPATH__, "lib"))
+
+using AudioStick
 using CmdLineTools
 using EasyConf
-using PlaylistTools
+using PlaylistTools #M3UFile
 
 
 # Constants
 ################################################################################
 
-const __APPNAME__ = "AudioStick"
+const __APPNAME__ = "AudioStick-Sync"
 const __CFGFILE__ = "AudioStick.cfg"
+
 #Entries in config file:
-	const CFGID_FSPLROOT = "FILESYSTEMPLAYLIST_ROOTFOLDER" 
+const CFGID_FSPLROOT = "FILESYSTEMPLAYLIST_ROOTFOLDER" 
 
 
 # Usage
@@ -37,11 +38,10 @@ end
 ################################################################################
 
 type ASOptions
-	srcpath::AbstractString      #Input playlist file
-	destrootpath::AbstractString #Root folder where filesystem-based playlists are stored
-	destpath::AbstractString     #Folder of filesystem-based playlist
+	srcpath::String #Input playlist file
+	tgtroot::String #Target path (excluding playlist subfolder)
 end
-ASOptions() = ASOptions("", "", "")
+ASOptions() = ASOptions("", "")
 
 
 # Helper functions
@@ -79,9 +79,9 @@ function main(apppath, args)
 	cfg = read(EasyConfFile, cfgpath)
 	default_fsplroot = getvalue(cfg, CFGID_FSPLROOT, "E:\\")
 
-#Ask for destination path:
-	prompt = "Root path of destination (exclude playlist subfolder)"
-	options.destrootpath = input(ASCIIString, prompt, default_fsplroot)
+#Ask for target path:
+	prompt = "Target path (excluding playlist subfolder)"
+	options.tgtroot = input(String, prompt, default_fsplroot)
 	println()
 
 	destfoldername = splitext(srcfilename)
@@ -91,12 +91,12 @@ function main(apppath, args)
 	destfoldername = destfoldername[1]
 
 #Create filesystem-based playlist:
-	options.destpath = joinpath(options.destrootpath, destfoldername)
+	destpath = joinpath(options.tgtroot, destfoldername)
 	playlist = read(M3UFile, options.srcpath)
-	synchronize(playlist, options.destpath)
+	synchronize(playlist, destpath)
 
 #Update config file:
-	cfg[CFGID_FSPLROOT] = options.destrootpath
+	cfg[CFGID_FSPLROOT] = options.tgtroot
 	write(EasyConfFile, cfgpath, cfg)
 end
 

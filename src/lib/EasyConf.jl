@@ -10,9 +10,9 @@ export getvalue
 ################################################################################
 
 type ConfigDict
-	d::Dict{AbstractString, Any}
+	d::Dict{String, Any}
 end
-ConfigDict() = ConfigDict(Dict{AbstractString, Any}())
+ConfigDict() = ConfigDict(Dict{String, Any}())
 
 type EasyConfFile
 	s::IOStream
@@ -23,7 +23,7 @@ end
 ################################################################################
 
 #-------------------------------------------------------------------------------
-function Base.open(::Type{EasyConfFile}, path::AbstractString, args...)
+function Base.open(::Type{EasyConfFile}, path::String, args...)
 	s = open(path, args...)
 	return EasyConfFile(s)
 end
@@ -40,7 +40,8 @@ function Base.read(f::EasyConfFile)
 		if length(elements) != 2
 			continue
 		end
-		cfg[strip(elements[1])] = strip(elements[2])
+		key = String(strip(elements[1])) #Need string (not SubString)
+		cfg[key] = strip(elements[2])
 	end
 
 	return cfg
@@ -54,7 +55,7 @@ function Base.write(f::EasyConfFile, cfg::ConfigDict)
 end
 
 #-------------------------------------------------------------------------------
-function Base.read(::Type{EasyConfFile}, path::AbstractString)
+function Base.read(::Type{EasyConfFile}, path::String)
 	local f, cfg
 	try
 		f = open(EasyConfFile, path, "r")
@@ -72,7 +73,7 @@ function Base.read(::Type{EasyConfFile}, path::AbstractString)
 end
 
 #-------------------------------------------------------------------------------
-function Base.write(::Type{EasyConfFile}, path::AbstractString, cfg::ConfigDict)
+function Base.write(::Type{EasyConfFile}, path::String, cfg::ConfigDict)
 	f = open(EasyConfFile, path, "w")
 	try
 		write(f, cfg)
@@ -85,12 +86,12 @@ end
 # Other tools
 ################################################################################
 
-Base.setindex!(c::ConfigDict, v, k::AbstractString) = c.d[k] = v
-Base.getindex(c::ConfigDict, k::AbstractString) = c.d[k]
+Base.setindex!(c::ConfigDict, v, k::String) = (c.d[k] = v)
+Base.getindex(c::ConfigDict, k::String) = c.d[k]
 
 # Safe means of reading from ConfigDict
 #-------------------------------------------------------------------------------
-function getvalue(c::ConfigDict, k::AbstractString, vdefault)
+function getvalue(c::ConfigDict, k::String, vdefault)
 	local result
 	try
 		result = c[k]
