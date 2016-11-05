@@ -73,21 +73,21 @@ Explorer context menus.
 
 1. Install source:
 
-    julia> Pkg.clone("https://github.com/ma-laforge/AudioStick.git")
+		julia> Pkg.clone("https://github.com/ma-laforge/AudioStick.git")
 
 1. Generate .inf file using build tool:
 
-    julia> Pkg.build("AudioStick")
+		julia> Pkg.build("AudioStick")
 
 1. Close Julia:
 
-    julia> exit()
+		julia> exit()
 
 1. Install the AudioStick context menu from the auto-generated .inf file:
 
   a. In Windows Explorer, right-click on:
 
-      [AudioStickPath]\_AddWin7ContextMenu.inf
+  		[AudioStickPath]\_AddWin7ContextMenu.inf
 
   a. Click "Install".
 
