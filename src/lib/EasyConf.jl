@@ -9,12 +9,12 @@ export getvalue
 # Types
 ################################################################################
 
-type ConfigDict
+mutable struct ConfigDict
 	d::Dict{String, Any}
 end
 ConfigDict() = ConfigDict(Dict{String, Any}())
 
-type EasyConfFile
+mutable struct EasyConfFile
 	s::IOStream
 end
 

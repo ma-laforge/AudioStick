@@ -108,7 +108,7 @@ softlinks.
 
 AudioStick has been tested using the following environment(s):
 
- - Windows 7 / Julia-0.5.0
+ - Windows 7 / Julia-0.6.0-rc2
 
 ## Disclaimer
 

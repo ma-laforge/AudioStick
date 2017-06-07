@@ -37,7 +37,7 @@ end
 # Types
 ################################################################################
 
-type ASOptions
+mutable struct ASOptions
 	srcpath::String #Input playlist file
 	tgtroot::String #Target path (excluding playlist subfolder)
 end

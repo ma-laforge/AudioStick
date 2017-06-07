@@ -11,10 +11,10 @@ using FileTools
 # Types
 ################################################################################
 
-abstract PlaylistFile
-type M3UFile <: PlaylistFile; end
+abstract type PlaylistFile end
+mutable struct M3UFile <: PlaylistFile; end
 
-typealias FileList Vector{String}
+const FileList = Vector{String}
 
 
 # Read/Write functions
