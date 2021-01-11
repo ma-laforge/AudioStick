@@ -74,7 +74,7 @@ register it to your Windows Explorer context menu.
     `julia> ]`<br>
     `pkg> add https://github.com/ma-laforge/AudioStick`
 
- 1. Generate .inf file using build tool:<br>
+ 1. Generate setup information file (.inf):<br>
     `julia> using AudioStick`<br>
     `julia> AudioStick.writeinf()`
 
