@@ -5,7 +5,7 @@ AudioStick allows you to copy/synchronize `.m3u/.m3u8` media playlists to
 an arbitrary directory (ex: external thumb drive). After synchronization,
 the resultant directory becomes a file-based playlist.
 
-### Sample Uses
+### Sample uses
 Copy all your music playlists to a single USB stick.  You can then listen to
 your favourite music on any media-capable USB port:
 
@@ -28,7 +28,7 @@ Implementation details of file-based playlist:
    (Adding a "track" twice in a playlist requires 2x the drive space of that
    "track").
 
-### Supported Playlist Files
+### Supported playlist files
 AudioStick currently supports playlists of the following formats:
 
  - M3U playlist (.m3u/.m3u8)
@@ -36,7 +36,7 @@ AudioStick currently supports playlists of the following formats:
 Simply right-click on the desired playlist file, and click on
 "Synchronize with AudioStick".
 
-### Synchronizing to iTunes Playlists
+### Synchronizing to iTunes playlists
 AudioStick synchronizes to iTunes playlists through intermediary .m3u files.
 The following steps demonstrate how one can export an iTunes 12 playlist to
 the required .m3u format:
@@ -87,14 +87,10 @@ register it to your Windows Explorer context menu.
        `[CWD]\AudioStick_AddWinExContextMenu.inf`
     1. Click `Install`.
 
-## Known Limitations
+## Known limitations
 
  - AudioStick currently only works on Windows, but could probably be ported to
    other platforms with little effort.
- - Due to limited understanding of Explorer context menus & registration, the
-   AudioStick context menu might only work for Windows 7.  It also might not
-   work if .m3u files are *not* associated with either Windows Media Player 11
-   or iTunes.
  - Duplicate tracks will each take up the entire memory space required by the
    original file.  This is because most of the tested consumer audio equipment
    would only support FAT32 USB drives - and the FAT32 system does not support
