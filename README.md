@@ -22,10 +22,11 @@ To circumvent this issue, AudioStick creates "filesystem-based playlists":
 Each playlist is organized in its own directory, and media files are copied
 one-by-one, using numbered prefixes to maintain track order.
 
-Specifics of file-based playlists:
+Implementation details of file-based playlist:
  - Filenames are prepended with each file's position in the playlist.
- - Each playlist entry/"track" is copied to its own file (Adding a "track"
-   twice in a playlist requires 2x the drive space of that "track").
+ - Each playlist entry/"track" is copied to its own file<br>
+   (Adding a "track" twice in a playlist requires 2x the drive space of that
+   "track").
 
 ### Supported Playlist Files
 AudioStick currently supports playlists of the following formats:
@@ -69,20 +70,20 @@ register it to your Windows Explorer context menu.
 
  1. Lauch Julia.
  1. Install source:
- ```
+```
 julia> ]
 pkg> Pkg.clone("https://github.com/ma-laforge/AudioStick.git")
- ```
+```
  1. Generate .inf file using build tool:
- ```
+```
 julia> using AudioStick
 julia> AudioStick.writeinf()
- ```
+```
  1. Install the AudioStick context menu from the auto-generated .inf file:
     a. In Windows Explorer, right-click on:
-    ```
+```
 [AudioStickPath]\_AddWin7ContextMenu.inf
-    ```
+```
     a. Click `Install`.
 
 ## Known Limitations
