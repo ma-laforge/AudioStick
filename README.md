@@ -79,6 +79,7 @@ register it to your Windows Explorer context menu.
     `julia> AudioStick.writeinf()`
 
  1. Install the AudioStick context menu from the auto-generated .inf file:
+
     a. In Windows Explorer, right-click on:<br>
        `[AudioStickPath]\AudioStick_AddWinExContextMenu.inf`
 
