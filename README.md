@@ -70,17 +70,17 @@ register it to your Windows Explorer context menu.
 
  1. Lauch Julia.
 
- 1. Install source:
-    `julia> ]`
+ 1. Install source:<br>
+    `julia> ]`<br>
     `pkg> add https://github.com/ma-laforge/AudioStick`
 
- 1. Generate .inf file using build tool:
-    `julia> using AudioStick`
+ 1. Generate .inf file using build tool:<br>
+    `julia> using AudioStick`<br>
     `julia> AudioStick.writeinf()`
 
  1. Install the AudioStick context menu from the auto-generated .inf file:
-    a. In Windows Explorer, right-click on:
-       `[AudioStickPath]\_AddWin7ContextMenu.inf`
+    a. In Windows Explorer, right-click on:<br>
+       `[AudioStickPath]\AudioStick_AddWinExContextMenu.inf`
 
     a. Click `Install`.
 
