@@ -1,0 +1,12 @@
+name = "AudioStick"
+uuid = "a42d19df-65d3-4f75-8b8d-75218f71d514"
+version = "0.1.0"
+
+[deps]
+ConventionalApp = "55cf995e-9a26-4f03-9a03-dce18fc00075"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+
+[compat]
+ConventionalApp = "0.1.0"
+julia = "1.0"

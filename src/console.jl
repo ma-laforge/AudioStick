@@ -1,46 +1,44 @@
-#CmdLineTools.jl
-#Provides tools to help with command-line interactions.
+#console.jl: Console tools.
 
-module CmdLineTools
 
-export input, pause
-export println_ul
+#==Output
+===============================================================================#
 
-using StringTools
-
-# Main tools
-################################################################################
-
-# Print with underline
-#-------------------------------------------------------------------------------
-function println_ul(text, ulchar = "-")
-	underline = prod(fill(ulchar, length(text)))
+#Print with underline
+function println_ul(text::String, ulchar = "─")
+	underline = repeat(ulchar, length(text))
 	println(text)
 	println(underline)
 end
 
-# Prompt user for a value
-#-------------------------------------------------------------------------------
-function input{T}(::Type{T}, prompt::String)
+
+#==Input
+===============================================================================#
+
+#Wrapper functions:
+_parse(::Type{String}, value::AbstractString) = string(value)
+_parse(::Type{T}, value::AbstractString) where T<:Real = parse(T, value)
+
+#Prompt user for a value
+function input(::Type{T}, prompt::String) where T
 	print(prompt)
-	return parsestring(T, strip(readline(STDIN)))
+	return _parse(T, strip(readline(stdin)))
 end
 
-# Prompt user for a value, using default
-#-------------------------------------------------------------------------------
-function input{T}(::Type{T}, prompt::String, default)
+#Prompt user for a value, using default
+function input(::Type{T}, prompt::String, default) where T
 	println(prompt)
 	print("[$default]: ")
-	result = parsestring(T, strip(readline(STDIN)))
+	result = _parse(T, strip(readline(stdin)))
 	if "" == result
 		result = default
 	end
 	return result
 end
 
-# Prompt user for string:
+#Prompt user for string:
 input(prompt::String) = input(String, prompt)
 
 pause() = input("Press enter to continue...")
 
-end #CmdLineTools
+#Last line

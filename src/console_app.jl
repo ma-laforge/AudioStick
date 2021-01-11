@@ -1,87 +1,61 @@
-#ASSync.jl
-#Simple command line interface for AudioStick package.
-
-const __APPPATH__ = dirname(realpath(@__FILE__))
-
-using AudioStick
-using CmdLineTools
-using EasyConf
-using PlaylistTools #M3UFile
+#console_app.jl: Simple command line interface for AudioStick package.
 
 
-# Constants
-################################################################################
+#==Constants
+===============================================================================#
+const APPNAME = "AudioStick"
 
-const __APPNAME__ = "AudioStick-Sync"
-const __CFGFILE__ = "AudioStick.cfg"
-
-#Entries in config file:
+#Entries in config file (currently not supported):
 const CFGID_FSPLROOT = "FILESYSTEMPLAYLIST_ROOTFOLDER" 
 
-
-# Usage
-################################################################################
-
-function showusage()
-	cmd = basename(@__FILE__)
-	println("$cmd")
-	println()
-	println("Usage:")
-	println("   $cmd [playlist]")
-	println()
-	println("$__APPNAME__ creates/synchronizes a filesystem-based")
-	println("media playlist from the specified playlist *file*.")
-end
+const DFLT_TGTROOT = "Z:\\"
 
 
-# Types
-################################################################################
-
+#==Types
+===============================================================================#
 mutable struct ASOptions
 	srcpath::String #Input playlist file
 	tgtroot::String #Target path (excluding playlist subfolder)
 end
-ASOptions() = ASOptions("", "")
+ASOptions(srcpath) = ASOptions(srcpath, DFLT_TGTROOT)
 
 
-# Helper functions
-################################################################################
+#==Helper functions
+===============================================================================#
 
-#-------------------------------------------------------------------------------
-function validateargs(args, options)
+#Parse & validate command-line arguments:
+function parseargs(args)
 	if length(args) < 1
-		showusage()
-		error("Insufficient arguments.")
+		@error("Must set source playlist in `ARGS`")
+		error("Insufficient arguments.") #throws
 	end
 
-	options.srcpath = joinpath(pwd(), args[1])
+	options = ASOptions(joinpath(pwd(), strip(args[1])))
 	if !isfile(options.srcpath)
 		error("Playlist not found: $(options.srcpath)")
 	end
+
+	if length(args) >= 2
+		options.tgtroot = strip(args[2])
+	end
+
+	return options
 end
 
 
-# Main entry point to the program
-################################################################################
+#==Main "console" entry point
+===============================================================================#
 
-#-------------------------------------------------------------------------------
-function main(apppath, args)
-#Validate command-line arguments:
-	options = ASOptions()
-	validateargs(args, options)
+function run_console(args)
+	options = parseargs(args)
 	srcfilename = basename(options.srcpath)
 
-	println_ul(__APPNAME__)
+	println_ul(APPNAME)
 	println("\nSource playlist: $srcfilename\n\n")
 
-#Read in settings from config file:
-	cfgpath = joinpath(apppath, __CFGFILE__)
-	cfg = read(EasyConfFile, cfgpath)
-	default_fsplroot = getvalue(cfg, CFGID_FSPLROOT, "E:\\")
-
-#Ask for target path:
+	#Ask for target path:
 	prompt = "Target path (excluding playlist subfolder)"
-	options.tgtroot = input(String, prompt, default_fsplroot)
+	options.tgtroot = input(String, prompt, options.tgtroot)
 	println()
 
 	destfoldername = splitext(srcfilename)
@@ -90,25 +64,17 @@ function main(apppath, args)
 	end
 	destfoldername = destfoldername[1]
 
-#Create filesystem-based playlist:
+	#Create filesystem-based playlist:
 	destpath = joinpath(options.tgtroot, destfoldername)
-	playlist = read(M3UFile, options.srcpath)
+	playlist = read_m3u(options.srcpath)
 	synchronize(playlist, destpath)
-
-#Update config file:
-	cfg[CFGID_FSPLROOT] = options.tgtroot
-	write(EasyConfFile, cfgpath, cfg)
 end
 
-# Start program
-#-------------------------------------------------------------------------------
-try
-	main(__APPPATH__, ARGS)
-catch e
-	@show e
-	pause()
-	rethrow(e)
-end
+"""`run_console()`
 
-pause()
-:Done
+Create/synchronize a filesystem-based media playlist from the playlist *file*
+specified in `ARGS`.
+"""
+run_console() = run_console(ARGS)
+
+#Last line

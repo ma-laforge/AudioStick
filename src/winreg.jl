@@ -1,16 +1,19 @@
-#AudioStick: configure.jl
-#
-#Configures system to run AudioStick (ASSync.jl).
-export makeinstall
+#winreg.jl: Register AudioStick as a Windows Explorer contextual menu.
 
-function makeinstall()
-	const __APPPATH__ = dirname(dirname(realpath(@__FILE__)))
-	const path_julia = joinpath(JULIA_HOME, "julia.exe")
-	const path_audiostick = joinpath(__APPPATH__, "ASSync.jl")
-	const text_action = "Synchronize with AudioStick"
-	const path_inf = joinpath(__APPPATH__, "AudioStick_AddWin7ContextMenu.inf")
+const STRING_SYNCWITHAUDIOSTICK = "Synchronize with AudioStick"
 
-	const inf_file = """
+#==
+===============================================================================#
+function generate_inf_string()
+	infqt(s) = string("\"\"", s, "\"\"") #.inf escaped quote (2 are necessary)
+	module_root = dirname(dirname(abspath(@__FILE__)))
+	juliacmd = infqt(joinpath(Sys.BINDIR, Base.julia_exename()))
+	path_audiostick = infqt(joinpath(module_root, "run.jl"))
+	#Compensate for shell bug by adding " " before quote
+	#(Interprets last "\" of "Z:\" as an escape char!)
+	path_dflttgt = infqt(DFLT_TGTROOT * " ")
+
+	inf_file = """
 [version]
 signature="\$CHICAGO\$"
 
@@ -18,35 +21,38 @@ signature="\$CHICAGO\$"
 AddReg = Explore.AddReg
 
 [Strings]
-ACTION_TEXT = "$text_action"
-ACTION_CMD = "$path_julia --color=yes $path_audiostick ""%1""\"
+ACTION_TEXT = "$STRING_SYNCWITHAUDIOSTICK"
+ACTION_CMD = "$juliacmd --color=yes $path_audiostick ""%1"" $path_dflttgt"
 
 [Explore.AddReg]
-HKCR,WMP11.AssocFile.M3U\\shell\\AudioStick,,,%ACTION_TEXT%
-HKCR,WMP11.AssocFile.M3U\\shell\\AudioStick\\command,,,%ACTION_CMD%
-HKCR,WMP11.AssocFile.M3U8\\shell\\AudioStick,,,%ACTION_TEXT%
-HKCR,WMP11.AssocFile.M3U8\\shell\\AudioStick\\command,,,%ACTION_CMD%
-HKCR,iTunes.m3u\\shell\\AudioStick,,,%ACTION_TEXT%
-HKCR,iTunes.m3u\\shell\\AudioStick\\command,,,%ACTION_CMD%
-HKCR,iTunes.m3u8\\shell\\AudioStick,,,%ACTION_TEXT%
-HKCR,iTunes.m3u8\\shell\\AudioStick\\command,,,%ACTION_CMD%
+HKCR,SystemFileAssociations\\.m3u\\shell\\AudioStick,,,%ACTION_TEXT%
+HKCR,SystemFileAssociations\\.m3u\\shell\\AudioStick\\command,,,%ACTION_CMD%
+HKCR,SystemFileAssociations\\.m3u8\\shell\\AudioStick,,,%ACTION_TEXT%
+HKCR,SystemFileAssociations\\.m3u8\\shell\\AudioStick\\command,,,%ACTION_CMD%
 """
+end
 
-	f = open(path_inf, "w")
-	write(f, inf_file)
-	close(f)
+#Create .inf file to register AudioStick as a Windows Explorer context menu
+function writeinf(filepath::String)
+	filepath = abspath(filepath)
+	filename = basename(filepath)
+	@info("Writing $filepath...")
+	open(filepath, "w") do f
+		write(f, generate_inf_string())
+	end
 
-	println("""
+	println("""\n
 You can now install the AudioStick context menu from the auto-generated
 .inf file:
    1) In Windows Explorer, right-click on:
-         $path_inf
+         $filename
    2) Click "Install".
 
 You will then be able to synchronize playlists from the windows Explorer:
    1) In Windows Explorer, right-click any .m3u/.m3u8 file.
-	2) Click "$text_action".
+	2) Click "$STRING_SYNCWITHAUDIOSTICK".
 """)
 end
+writeinf() = writeinf("AudioStick_AddWinExContextMenu.inf")
 
 #Last line
