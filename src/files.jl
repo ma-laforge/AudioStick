@@ -5,12 +5,11 @@
 ===============================================================================#
 #Compute hash key from file contents to verify file equivalence.
 function hashcontents(filepath::String)
-	try
-		open(filepath) do f
-			return sha2_256(f)
-		end
-	catch
+	if !isfile(filepath)
 		return sha2_256("")
+	end
+	open(filepath) do f
+		return sha2_256(f)
 	end
 end
 
