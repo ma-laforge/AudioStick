@@ -80,9 +80,9 @@ register it to your Windows Explorer context menu.
 
  1. Install the AudioStick context menu from the auto-generated .inf file:
 
-   a. In Windows Explorer, right-click on:<br>
-      `[AudioStickPath]\AudioStick_AddWinExContextMenu.inf`
-   a. Click `Install`.
+    1. In Windows Explorer, right-click on:<br>
+       `[AudioStickPath]\AudioStick_AddWinExContextMenu.inf`
+    1. Click `Install`.
 
 ## Known Limitations
 
