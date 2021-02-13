@@ -15,8 +15,10 @@ function run_app()
 		run_console()
 	catch e
 		@error(e)
-		pause() #In case windows closes once function returns
+#		rethrow(e) #debug
 	end
+
+	pause() #Allow user to see results before closing terminal.
 end
 
 end
