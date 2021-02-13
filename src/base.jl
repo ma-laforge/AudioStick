@@ -58,6 +58,7 @@ end
 function clean_playlistfolder(tgtlist::Playlist)
 	destfld = tgtlist.origin
 	n_delete = 0
+	if !isdir(destfld); return 0; end
 	filelist = readdir(destfld)
 	for filename in filelist
 		if !(basename(filename) in tgtlist)
